@@ -1059,6 +1059,18 @@ h3::before{content:"";width:7px;height:7px;background:var(--cin);transform:rotat
 .near-panel>*{flex:0 0 auto}
 .near-panel .np-list{flex:1 1 auto;min-height:0}
 @media (min-width:900px){#map-wrap{bottom:0}}
+
+/* заметные фильтры карты */
+.map-ctl{left:0;right:0;top:0;padding:10px 8px 0}
+.map-ctl::before{content:"";position:absolute;left:0;right:0;top:0;height:74px;background:linear-gradient(180deg,rgba(244,234,216,.95),rgba(244,234,216,.75) 60%,rgba(244,234,216,0));pointer-events:none;z-index:-1}
+.mchip{min-height:44px;padding:8px 14px 8px 8px;font-size:15.5px;font-weight:700;background:#fffdf7;border:2px solid var(--cc,var(--cin));color:var(--ink);display:inline-flex;align-items:center;gap:7px;box-shadow:0 3px 10px rgba(60,30,0,.22)!important}
+.mchip .mi{width:28px;height:28px;border-radius:50%;background:var(--cc,var(--cin));display:inline-flex;align-items:center;justify-content:center;font-size:15px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.6)}
+.mchip .n{font-weight:600;opacity:.65;font-size:13px;margin-left:0}
+.mchip.on{background:var(--cc,var(--cin));border-color:var(--cc,var(--cin));color:#fff;box-shadow:0 3px 12px rgba(60,30,0,.3),inset 0 0 0 2px rgba(255,255,255,.35)!important}
+.mchip.on .mi{background:rgba(255,255,255,.25)}
+.mchip.on .n{opacity:.85}
+.mchip.all{padding-left:14px;--cc:var(--cin)}
+.near-on .leaflet-control-zoom{display:none}
 </style>
 </head>
 <body>
@@ -1465,23 +1477,6 @@ function sheetHtml(p) {
   if (p.subtitle) h += '<div class="subt">' + esc(p.subtitle) + '</div>';
   h += '<div class="row" style="margin-top:6px">' + cats + '</div>';
 
-  /* как добраться: адрес + Amap + на карте */
-  var ar = amapRouteUrl(p);
-  h += '<div class="sec"><h4><span class="seal">路</span>Как добраться</h4>';
-  if (p.name_zh || p.address_zh) {
-    h += '<div class="drv">';
-    if (p.name_zh) h += '<div class="copyrow"><span class="cn" lang="zh">' + esc(p.name_zh) + '</span><button class="btn sm" data-copy="name" aria-label="Скопировать название">📋</button></div>';
-    if (p.address_zh) h += '<div class="copyrow" style="margin-top:8px"><span class="cn" lang="zh" style="font-size:16px">' + esc(p.address_zh) + '</span><button class="btn sm" data-copy="addr" aria-label="Скопировать адрес">📋</button></div>';
-    h += '</div>';
-  }
-  if (p.address) h += '<p class="small" style="margin:8px 0 0">' + esc(p.address) + '</p>';
-  h += '<div class="links" style="margin-top:10px"><button class="btn primary" data-act="onmap">🗺️ На карте</button>';
-  if (ar) h += '<a class="btn gold" href="' + esc(ar) + '" target="_blank" rel="noopener">🧭 Открыть в Amap</a>';
-  h += '</div>';
-  if (d != null) h += '<p class="small muted" style="margin:8px 0 0">≈ ' + fmtDist(d) + ' по прямой от ' + esc(pt.label) + '</p>';
-  if (p.coord_note) h += '<p class="src">📍 ' + esc(p.coord_note) + '</p>';
-  h += '</div>';
-
   h += '<div class="sec"><h4><span class="seal">述</span>Описание</h4><p style="margin:0">' + esc(p.description || 'Описания нет.') + '</p>';
   if (p.needs_check) h += '<div class="notice">⚠️ Уточните перед визитом: ' + esc(p.needs_check) + '</div>';
   h += '</div>';
@@ -1500,6 +1495,23 @@ function sheetHtml(p) {
     if (p.group_tip) h += '<div class="tipbox">👥 <b>Если вы компанией:</b> ' + esc(p.group_tip) + '</div>';
     h += '</div>';
   }
+  /* как добраться: адрес + Amap + на карте */
+  var ar = amapRouteUrl(p);
+  h += '<div class="sec"><h4><span class="seal">路</span>Как добраться</h4>';
+  if (p.name_zh || p.address_zh) {
+    h += '<div class="drv">';
+    if (p.name_zh) h += '<div class="copyrow"><span class="cn" lang="zh">' + esc(p.name_zh) + '</span><button class="btn sm" data-copy="name" aria-label="Скопировать название">📋</button></div>';
+    if (p.address_zh) h += '<div class="copyrow" style="margin-top:8px"><span class="cn" lang="zh" style="font-size:16px">' + esc(p.address_zh) + '</span><button class="btn sm" data-copy="addr" aria-label="Скопировать адрес">📋</button></div>';
+    h += '</div>';
+  }
+  if (p.address) h += '<p class="small" style="margin:8px 0 0">' + esc(p.address) + '</p>';
+  h += '<div class="links" style="margin-top:10px"><button class="btn primary" data-act="onmap">🗺️ На карте</button>';
+  if (ar) h += '<a class="btn gold" href="' + esc(ar) + '" target="_blank" rel="noopener">🧭 Открыть в Amap</a>';
+  h += '</div>';
+  if (d != null) h += '<p class="small muted" style="margin:8px 0 0">≈ ' + fmtDist(d) + ' по прямой от ' + esc(pt.label) + '</p>';
+  if (p.coord_note) h += '<p class="src">📍 ' + esc(p.coord_note) + '</p>';
+  h += '</div>';
+
   if (p.photo_credit) h += '<p class="src" style="text-align:center">Фото: ' + esc(p.photo_credit) + '</p>';
   h += '</div>';
   return h;
@@ -1552,8 +1564,8 @@ function ensureMap() {
 }
 function renderMapChips() {
   var any = Object.keys(M.cats).length;
-  var h = '<button class="chip' + (any ? '' : ' on') + '" data-mcat="">Все</button>';
-  CATS.forEach(function (c) { var n = catCount(c.id); if (!n) return; h += '<button class="chip' + (M.cats[c.id] ? ' on' : '') + '" data-mcat="' + c.id + '"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:' + c.color + ';margin-right:6px;vertical-align:1px"></span>' + esc(c.icon + ' ' + c.short) + '</button>'; });
+  var h = '<button class="chip mchip all' + (any ? '' : ' on') + '" data-mcat="">Все<span class="n">' + PLACES.length + '</span></button>';
+  CATS.forEach(function (c) { var n = catCount(c.id); if (!n) return; h += '<button class="chip mchip' + (M.cats[c.id] ? ' on' : '') + '" style="--cc:' + c.color + '" data-mcat="' + c.id + '"><span class="mi">' + c.icon + '</span>' + esc(c.short) + '<span class="n">' + n + '</span></button>'; });
   $('m-cats').innerHTML = h;
 }
 function inFilter(p) {
