@@ -1,5 +1,5 @@
 /* Пекин · путеводитель — офлайн-режим */
-var V = 'bg-v4';
+var V = 'bg-v5';
 var IMG = 'bg-img-v1';
 var TILES = 'bg-tiles-v1';
 var TILE_MAX = 3000;
